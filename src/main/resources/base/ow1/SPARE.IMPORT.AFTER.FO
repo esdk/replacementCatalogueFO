@@ -10,27 +10,33 @@
 ..*****************************************************************************
 ..<META M|='ow1/REPLACEMENTCATALOGUE' >
 ..
+.type bool update
+..
 .continue NVENDOR ? 'M|vendor' = ""
 ..
 .select screen line 1
 !NEXT
 .continue SKIP ? 'M|import' = 'G|false'
-.select file "$,,"
+.select lock file 'F|formatstr("$,,yvendor=={1};ymatchcode=={2}", M|vendor, M|matchcode)'
+.formula U|update = G|true
+.continue UPDATE ? G|success = G|true
 .make file group0
 ..<META H|='P15:0'>
+.formula U|UPDATE = G|false
 .formula H|swd = 'F|formatstr("SPARE{1}", M|vendor^idno)'
 .formula H|descr = M|descr
 .formula H|yvendor = M|vendor
+.formula H|ymatchcode = M|matchcode
+.formula H|ydate = "."
+!UPDATE
 .formula H|yproductno = M|productno
 .formula H|ydescr = M|descr
-.formula H|ymatchcode = M|matchcode
 .formula H|yprice = M|price
-.formula H|ydate = "."
 .formula H|ychanged = "."
 .formula H|ysigned = G|operatorCode
 .formula H|ytransferred = G|true
 .rewrite
-.formula M|transfericon = "icon:plus"
+.continue ICON
 !SKIP
 .select screen line
 .continue NEXT ? G|success = G|true
@@ -43,3 +49,7 @@
 !END
 .end
 
+!ICON
+.formula M|transfericon = "icon:plus" ? U|update = G|false
+.formula M|transfericon = "icon:replace" ? U|update = G|true
+.continue SKIP
